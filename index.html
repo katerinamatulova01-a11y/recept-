@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎂</text></svg>">
+<title>Receptář</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1a1a1a;background:#f5f4f0;font-size:15px;min-height:100vh}
+.app{max-width:800px;margin:0 auto;padding:0.75rem 0.75rem 4rem}
+.nav{display:flex;gap:2px;background:#e8e6e0;border-radius:14px;padding:3px;margin-bottom:1.25rem;overflow-x:auto;position:sticky;top:8px;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.nav-btn{flex:1;min-width:58px;padding:8px 4px;font-size:12px;font-weight:500;border:none;background:transparent;color:#666;border-radius:11px;cursor:pointer;white-space:nowrap;transition:all 0.15s}
+.nav-btn.active{background:#fff;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,0.1)}
+.card{background:#fff;border:0.5px solid #e0ddd6;border-radius:14px;padding:1rem;margin-bottom:0.75rem}
+.card-sm{background:#f5f4f0;border:0.5px solid #e0ddd6;border-radius:10px;padding:0.6rem 0.75rem;margin-bottom:0.5rem}
+label{display:block;font-size:12px;color:#666;margin-bottom:3px;margin-top:0.75rem;font-weight:500}
+label:first-child{margin-top:0}
+input[type=text],input[type=number],input[type=password],textarea,select{width:100%;padding:8px 10px;font-size:14px;border:0.5px solid #ccc;border-radius:9px;background:#fff;color:#1a1a1a;outline:none;-webkit-appearance:none}
+input:focus,textarea:focus,select:focus{border-color:#1a1a1a}
+textarea{resize:vertical;min-height:72px;line-height:1.5}
+.row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.col{flex:1;min-width:120px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;font-size:13px;border:0.5px solid #ccc;border-radius:9px;cursor:pointer;background:transparent;color:#1a1a1a;font-weight:500;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.btn:hover,.btn:active{background:#f5f4f0}
+.btn.prim{background:#1a1a1a;color:#fff;border-color:transparent}
+.btn.prim:hover,.btn.prim:active{background:#333}
+.btn.del{color:#8b2020;border-color:#f0b0b0}
+.btn.del:hover{background:#fff0f0}
+.btn.ai-btn{background:#edf7e6;color:#2d6010;border-color:#b8dda0}
+.btn.ai-btn:hover{background:#d8efcc}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:0.75rem}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.chip{padding:5px 11px;border:0.5px solid #ccc;border-radius:20px;font-size:12px;cursor:pointer;background:transparent;color:#666;-webkit-tap-highlight-color:transparent}
+.chip.on{background:#1a1a1a;color:#fff;border-color:transparent}
+.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500}
+.tag.svadba{background:#fce8f0;color:#8b2050}
+.tag.svatky{background:#faecd8;color:#7a4a00}
+.tag.bezlepek{background:#eaf5e0;color:#2d6010}
+.tag.vegan{background:#dff5ee;color:#085040}
+.tag.special{background:#eeecff;color:#3c3490}
+.tag.zakaznik{background:#e4f0fc;color:#0c4480}
+.r-card{background:#fff;border:0.5px solid #e0ddd6;border-radius:14px;padding:1rem;margin-bottom:0.6rem;cursor:pointer;transition:border-color 0.15s;-webkit-tap-highlight-color:transparent}
+.r-card:hover,.r-card:active{border-color:#aaa}
+.r-card h3{font-size:15px;font-weight:500;margin-bottom:3px}
+.r-card .meta{font-size:12px;color:#888;display:flex;gap:8px;flex-wrap:wrap;margin-bottom:5px}
+.slozka-block{border:0.5px solid #e0ddd6;border-radius:10px;padding:0.75rem;margin-bottom:0.6rem;background:#f9f8f5}
+.slozka-header{display:flex;align-items:center;gap:8px;margin-bottom:0.5rem}
+.slozka-header input{flex:1}
+.ingr-line{display:flex;gap:5px;align-items:center;margin-bottom:5px}
+.ingr-line input:first-child{max-width:65px}
+.ingr-line input:nth-child(2){max-width:52px}
+.ingr-line input:nth-child(3){flex:1}
+.ingr-tbl{width:100%;font-size:13px;border-collapse:collapse}
+.ingr-tbl td{padding:4px 6px;border-bottom:0.5px solid #eee}
+.ingr-tbl td:first-child{font-weight:500;width:58px;text-align:right;padding-right:8px;color:#888}
+.ingr-tbl td:nth-child(2){width:28px;color:#888}
+.ingr-tbl tr:last-child td{border-bottom:none}
+.note-box{background:#f5f4f0;border-left:2px solid #ccc;padding:8px 10px;border-radius:0 9px 9px 0;font-size:13px;color:#666;line-height:1.5}
+.time-pills{display:flex;gap:8px;flex-wrap:wrap}
+.time-pill{background:#f5f4f0;border:0.5px solid #e0ddd6;border-radius:20px;padding:4px 11px;font-size:12px;color:#666}
+.time-pill b{color:#1a1a1a}
+.ai-box{background:#edf7e6;border:0.5px solid #b8dda0;border-radius:14px;padding:1rem;margin-top:0.75rem}
+.ai-box p{font-size:13px;color:#1e4a08;line-height:1.6}
+.ai-label{font-size:11px;font-weight:600;color:#2d6010;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.05em}
+.ai-err{background:#fff0f0;border-color:#f0b0b0}
+.ai-err p,.ai-err .ai-label{color:#8b2020}
+.scan-zone{border:1.5px dashed #bbb;border-radius:14px;padding:1.5rem 1rem;text-align:center;background:#f9f8f5;transition:border-color 0.2s}
+.scan-zone.over{border-color:#1a1a1a;background:#f0eee8}
+.preview-img{width:100%;max-height:260px;object-fit:contain;border-radius:10px;border:0.5px solid #e0ddd6;display:none;margin-top:0.75rem}
+.progress-bar{height:4px;background:#e0ddd6;border-radius:2px;overflow:hidden;margin:8px 0}
+.progress-fill{height:100%;background:#2d6010;border-radius:2px;transition:width 0.4s}
+.scale-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:0.5px solid #eee;font-size:13px}
+.scale-row:last-child{border-bottom:none}
+.combo-pick{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid #eee;font-size:13px}
+.combo-pick:last-child{border-bottom:none}
+.combo-pick input[type=checkbox]{width:18px;height:18px;cursor:pointer;flex-shrink:0;accent-color:#1a1a1a}
+.combo-pick span{flex:1}
+.combo-pick input[type=number]{width:68px}
+.sec-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.85rem}
+.sec-h h2{font-size:17px;font-weight:600}
+.empty{text-align:center;padding:2.5rem 1rem;color:#888;font-size:13px}
+.api-key-banner{background:#fff8e6;border:0.5px solid #f0d080;border-radius:12px;padding:0.9rem 1rem;margin-bottom:1rem;font-size:13px;color:#7a5000}
+.settings-section{margin-bottom:1.5rem}
+.settings-section h3{font-size:14px;font-weight:600;margin-bottom:0.5rem;color:#444}
+.vel-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:0.5rem}
+.vel-card{background:#f9f8f5;border:0.5px solid #e0ddd6;border-radius:10px;padding:0.75rem}
+.vel-card .vel-name{font-size:13px;font-weight:600;margin-bottom:1px}
+.vel-card .vel-sub{font-size:11px;color:#888;margin-bottom:8px}
+.vel-card input[type=number]{text-align:center}
+.prep-mode-tabs{display:flex;gap:4px;margin-top:0.75rem;margin-bottom:0.75rem;background:#f5f4f0;border-radius:10px;padding:3px}
+.prep-mode-tab{flex:1;padding:7px;font-size:12px;font-weight:500;border:none;background:transparent;color:#888;border-radius:8px;cursor:pointer;text-align:center}
+.prep-mode-tab.active{background:#fff;color:#1a1a1a;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+.mbl-header{font-size:12px;font-weight:600;color:#555;background:#f5f4f0;border-radius:8px;padding:5px 10px;margin-bottom:4px;margin-top:0.75rem}
+.mbl-total{background:#e8f0d8;color:#2d5010}
+</style>
+</head>
+<body>
+<!-- PRISTUP ODEPREN -->
+<div id="no-access-screen" style="display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:2rem;text-align:center">
+  <div style="font-size:48px;margin-bottom:1rem">🔒</div>
+  <h1 style="font-size:20px;font-weight:600;margin-bottom:0.5rem">Přístup odepřen</h1>
+  <p style="font-size:14px;color:#888;margin-bottom:0.5rem">Tvůj účet nemá přístup k receptáři.</p>
+  <p id="no-access-email" style="font-size:13px;color:#aaa;margin-bottom:2rem"></p>
+  <button id="logout-no-access-btn" style="padding:10px 20px;font-size:14px;border:0.5px solid #ccc;border-radius:10px;cursor:pointer;background:#fff;color:#666">Odhlásit se</button>
+</div>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:2rem;text-align:center">
+  <div style="font-size:48px;margin-bottom:1rem">🎂</div>
+  <h1 style="font-size:24px;font-weight:600;margin-bottom:0.5rem">Receptář</h1>
+  <p style="font-size:14px;color:#888;margin-bottom:2rem">Přihlas se pro přístup k receptům</p>
+  <button id="login-btn" style="display:flex;align-items:center;gap:10px;padding:12px 24px;font-size:15px;font-weight:500;border:0.5px solid #ccc;border-radius:12px;cursor:pointer;background:#fff;color:#1a1a1a;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+    <img src="https://www.google.com/favicon.ico" style="width:18px;height:18px">
+    Přihlásit se přes Google
+  </button>
+  <div id="login-error" style="margin-top:1rem;font-size:13px;color:#8b2020;max-width:300px;word-break:break-all"></div>
+</div>
+
+<div class="app" style="display:none">
+
+<div class="nav">
+  <button class="nav-btn active" id="nav-list" onclick="goTab('list')">Recepty</button>
+  <button class="nav-btn" id="nav-new" onclick="goTab('new');resetForm()">+ Nový</button>
+  <button class="nav-btn" id="nav-scan" onclick="goTab('scan')">📷 Sken</button>
+  <button class="nav-btn" id="nav-prep" onclick="goTab('prepocet')">Přepočet</button>
+  <button class="nav-btn" id="nav-set" onclick="goTab('nastaveni')">⚙️</button>
+  <button class="nav-btn" id="nav-logout" onclick="odhlasit()" style="color:#8b2020" title="Odhlásit se">↩</button>
+</div>
+<div id="user-bar" style="font-size:11px;color:#aaa;text-align:right;margin:-0.75rem 0 0.75rem;padding-right:4px"></div>
+
+<!-- LIST -->
+<div id="tab-list">
+  <div class="sec-h"><h2>Moje recepty</h2><button class="btn sm" onclick="goTab('new');resetForm()">+ Přidat</button></div>
+  <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap">
+    <input type="text" id="srch" placeholder="Hledat..." oninput="renderList()" style="flex:1;min-width:120px">
+    <select id="srch-typ" onchange="renderList()" style="max-width:148px">
+      <option value="">Všechny typy</option>
+      <option value="dort">Dort</option>
+      <option value="zakusek">Zákusek</option>
+      <option value="korpus">Korpus / složka</option>
+      <option value="krem">Krém</option>
+      <option value="jine">Jiné</option>
+    </select>
+  </div>
+  <div id="recipe-list"></div>
+</div>
+
+<!-- DETAIL -->
+<div id="tab-detail" style="display:none">
+  <button class="btn sm" onclick="goTab('list')" style="margin-bottom:1rem">← Zpět</button>
+  <div id="detail-content"></div>
+</div>
+
+<!-- NEW/EDIT -->
+<div id="tab-new" style="display:none">
+  <div class="sec-h"><h2 id="form-title">Nový recept</h2></div>
+  <input type="hidden" id="edit-id">
+  <div class="card">
+    <div class="row">
+      <div class="col"><label>Název receptu</label><input type="text" id="r-name" placeholder="Vanilkový dort..."></div>
+      <div class="col" style="max-width:138px"><label>Typ</label>
+        <select id="r-typ">
+          <option value="dort">Dort</option>
+          <option value="zakusek">Zákusek</option>
+          <option value="korpus">Korpus / složka</option>
+          <option value="krem">Krém</option>
+          <option value="jine">Jiné</option>
+        </select>
+      </div>
+    </div>
+    <div class="row" style="margin-top:0.25rem">
+      <div class="col" style="max-width:130px"><label>Porce / ks (základ)</label><input type="number" id="r-porce" value="1" min="1"></div>
+      <div class="col" style="max-width:190px" id="dort-size-wrap"><label>Velikost dortu</label>
+        <select id="r-dort-size">
+          <option value="">– vlastní –</option>
+          <option value="17">17 cm (7 porcí)</option>
+          <option value="21">21 cm (14 porcí)</option>
+          <option value="25">25 cm (18 porcí)</option>
+          <option value="25v">25 cm vyšší (25 porcí)</option>
+        </select>
+      </div>
+      <div class="col" style="max-width:108px"><label>Příprava (min)</label><input type="number" id="r-priprava" placeholder="30"></div>
+      <div class="col" style="max-width:108px"><label>Pečení (min)</label><input type="number" id="r-peceni" placeholder="45"></div>
+    </div>
+    <label>Štítky</label>
+    <div class="chips" id="tag-chips">
+      <button class="chip" data-tag="svadba" onclick="toggleTag(this)">Svatba</button>
+      <button class="chip" data-tag="svatky" onclick="toggleTag(this)">Svátky</button>
+      <button class="chip" data-tag="bezlepek" onclick="toggleTag(this)">Bezlepek</button>
+      <button class="chip" data-tag="vegan" onclick="toggleTag(this)">Vegan</button>
+      <button class="chip" data-tag="special" onclick="toggleTag(this)">Speciální</button>
+      <button class="chip" data-tag="zakaznik" onclick="toggleTag(this)">Zákazník</button>
+    </div>
+    <label>Popis</label>
+    <textarea id="r-popis" placeholder="Na co se recept hodí, chuť, konzistence..."></textarea>
+  </div>
+  <div class="sec-h" style="margin-top:0.25rem">
+    <h3 style="font-size:15px;font-weight:600">Složky receptu</h3>
+    <button class="btn sm" onclick="addSlozka()">+ Složka</button>
+  </div>
+  <div id="slozky-wrap"></div>
+  <div class="card" style="margin-top:0.25rem">
+    <label style="margin-top:0">Postup přípravy</label>
+    <textarea id="r-postup" placeholder="1. Předehřejte troubu na 180°C..."></textarea>
+    <label>Poznámky a tipy</label>
+    <textarea id="r-poznamky" placeholder="Tipy, varianty, upozornění..."></textarea>
+  </div>
+  <div class="btn-row">
+    <button class="btn prim" onclick="saveRecept()">Uložit recept</button>
+    <button class="btn ai-btn" onclick="aiPostup()">AI navrhne postup ✦</button>
+    <button class="btn" onclick="resetForm();goTab('list')">Zrušit</button>
+  </div>
+  <div id="ai-form-box"></div>
+</div>
+
+<!-- SCAN -->
+<div id="tab-scan" style="display:none">
+  <div class="sec-h"><h2>Skenovat recept</h2></div>
+  <p style="font-size:13px;color:#888;margin-bottom:1rem">Vyfoť nebo nahraj fotku ručně psaného či tištěného receptu — AI ho přečte a vyplní formulář.</p>
+  <div id="no-key-scan" style="display:none" class="api-key-banner">⚠️ Nastav API klíč v <b>⚙️ Nastavení</b> aby skenování fungovalo.</div>
+  <div class="card">
+    <label style="margin-top:0">Vyber nebo vyfoť recept</label>
+    <input type="file" id="file-inp" accept="image/*" onchange="handleScanFile(this)" style="font-size:13px;width:100%;margin-top:4px">
+    <div id="scan-zone" class="scan-zone" style="margin-top:0.75rem"
+      ondragover="event.preventDefault();this.classList.add('over')"
+      ondragleave="this.classList.remove('over')"
+      ondrop="onScanDrop(event)">
+      <div style="font-size:13px;color:#888" id="scan-zone-hint">nebo sem přetáhni fotku</div>
+    </div>
+    <img id="scan-preview" class="preview-img">
+    <div id="scan-progress" style="display:none;margin-top:0.75rem">
+      <div style="font-size:13px;color:#666" id="scan-status-txt">Načítám...</div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div id="scan-action" style="display:none" class="btn-row">
+      <button class="btn prim" onclick="doScan()">Přečíst recept ✦</button>
+      <button class="btn" onclick="clearScan()">Jiná fotka</button>
+    </div>
+  </div>
+  <div id="scan-result"></div>
+</div>
+
+<!-- PREPOCET -->
+<div id="tab-prepocet" style="display:none">
+  <h2 style="font-size:17px;font-weight:600;margin-bottom:1rem">Přepočet receptu</h2>
+  <div class="card">
+    <label style="margin-top:0">Vybrat recept</label>
+    <select id="prep-sel" onchange="prepLoad()"><option value="">– vyberte –</option></select>
+
+    <div class="prep-mode-tabs">
+      <button class="prep-mode-tab active" id="pmt-vel" onclick="setPrepMode('vel')">Podle velikostí dortů</button>
+      <button class="prep-mode-tab" id="pmt-porce" onclick="setPrepMode('porce')">Podle porcí / násobitele</button>
+    </div>
+
+    <!-- REŽIM: VELIKOSTI -->
+    <div id="prep-vel-mode">
+      <p style="font-size:12px;color:#888;margin-bottom:0.75rem">Zadej kolik kusů každé velikosti potřebuješ:</p>
+      <div class="vel-grid">
+        <div class="vel-card">
+          <div class="vel-name">17 cm</div>
+          <div class="vel-sub">7 porcí / dort</div>
+          <input type="number" id="vel-17" value="0" min="0" step="1" oninput="prepPocitejVel()">
+        </div>
+        <div class="vel-card">
+          <div class="vel-name">21 cm</div>
+          <div class="vel-sub">14 porcí / dort</div>
+          <input type="number" id="vel-21" value="0" min="0" step="1" oninput="prepPocitejVel()">
+        </div>
+        <div class="vel-card">
+          <div class="vel-name">25 cm</div>
+          <div class="vel-sub">18 porcí / dort</div>
+          <input type="number" id="vel-25" value="0" min="0" step="1" oninput="prepPocitejVel()">
+        </div>
+        <div class="vel-card">
+          <div class="vel-name">25 cm vyšší</div>
+          <div class="vel-sub">25 porcí / dort</div>
+          <input type="number" id="vel-25v" value="0" min="0" step="1" oninput="prepPocitejVel()">
+        </div>
+      </div>
+    </div>
+
+    <!-- REŽIM: PORCE / NÁSOBITEL -->
+    <div id="prep-porce-mode" style="display:none">
+      <div class="row">
+        <div class="col"><label style="margin-top:0">Cílový počet porcí / ks</label><input type="number" id="prep-porce" placeholder="Např. 12" oninput="prepPocitej()"></div>
+        <div class="col" style="max-width:132px"><label style="margin-top:0">Nebo násobitel</label><input type="number" id="prep-nas" placeholder="Např. 1.5" step="0.1" oninput="prepPocitej()"></div>
+      </div>
+    </div>
+  </div>
+  <div id="prep-result"></div>
+</div>
+
+<!-- NASTAVENI -->
+<div id="tab-nastaveni" style="display:none">
+  <div class="sec-h"><h2>Nastavení</h2></div>
+  <div class="card">
+    <div class="settings-section">
+      <h3>🔑 Gemini API klíč</h3>
+      <p style="font-size:13px;color:#888;margin-bottom:0.75rem">Potřebuješ pro AI funkce. Klíč se ukládá pouze v tomto prohlížeči.</p>
+      <label style="margin-top:0">API klíč</label>
+      <div style="display:flex;gap:8px">
+        <input type="password" id="api-key-inp" placeholder="AIza..." style="flex:1">
+        <button class="btn prim" onclick="saveApiKey()">Uložit</button>
+      </div>
+      <div id="api-key-status" style="font-size:12px;margin-top:6px;color:#888"></div>
+      <p style="font-size:12px;color:#aaa;margin-top:8px">Klíč získáš na <b>aistudio.google.com</b> → Get API key.</p>
+    </div>
+    <div class="settings-section" style="margin-top:1.25rem;padding-top:1.25rem;border-top:0.5px solid #eee">
+      <h3>💾 Data</h3>
+      <p style="font-size:13px;color:#888;margin-bottom:0.75rem">Recepty jsou uloženy v tomto prohlížeči (localStorage).</p>
+      <div class="btn-row">
+        <button class="btn sm" onclick="exportData()">Exportovat (JSON)</button>
+        <button class="btn sm del" onclick="importData()">Importovat (JSON)</button>
+      </div>
+      <input type="file" id="import-inp" accept=".json" style="display:none" onchange="doImport(this)">
+    </div>
+  </div>
+</div>
+
+</div><!-- /app -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut, browserLocalPersistence, setPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBFXbuXNJlN0oZOII_L5Zj1T8s1lIwf-5o",
+  authDomain: "receptar-2827e.firebaseapp.com",
+  projectId: "receptar-2827e",
+  storageBucket: "receptar-2827e.firebasestorage.app",
+  messagingSenderId: "147862413665",
+  appId: "1:147862413665:web:d67b914ec3ce1df6c2e520"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+setPersistence(auth, browserLocalPersistence).catch(e=>console.warn('Persistence error:', e));
+const provider = new GoogleAuthProvider();
+provider.setCustomParameters({ prompt: 'select_account' });
+// Perzistence je nastavena defaultně na browserLocalPersistence
+const COLLECTION = "recepty";
+let currentUser = null;
+let POVOLENE_EMAILY = []; // načte se z Firestore
+
+const DORT_SIZES={
+  '17': {label:'17 cm',     porce:7},
+  '21': {label:'21 cm',     porce:14},
+  '25': {label:'25 cm',     porce:18},
+  '25v':{label:'25 cm vyšší',porce:25},
+};
+
+let recepty=[];
+// Zobrazí stav načítání
+document.getElementById('recipe-list').innerHTML='<div class="empty">Načítám recepty...</div>';
+
+async function saveRecept_db(r){
+  try{ await setDoc(doc(db, COLLECTION, r.id), r); }
+  catch(e){ console.error('Firebase save error:', e); alert('Chyba při ukládání: '+e.message); }
+}
+async function deleteRecept_db(id){
+  try{ await deleteDoc(doc(db, COLLECTION, id)); }
+  catch(e){ console.error('Firebase delete error:', e); }
+}
+function save(){
+  // localStorage jako záloha
+  localStorage.setItem('receptar_v5', JSON.stringify(recepty));
+}
+function getKey(){return localStorage.getItem('receptar_apikey')||''}
+function saveApiKey(){
+  const v=document.getElementById('api-key-inp').value.trim();
+  if(!v){alert('Zadej API klíč');return}
+  localStorage.setItem('receptar_apikey',v);
+  document.getElementById('api-key-status').textContent='✓ Uloženo';
+  document.getElementById('api-key-status').style.color='#2d6010';
+  checkKeyBanners();
+}
+function checkKeyBanners(){
+  const el=document.getElementById('no-key-scan');
+  if(el)el.style.display=getKey()?'none':'block';
+}
+
+function goTab(t){
+  ['list','detail','new','scan','prepocet','nastaveni'].forEach(x=>{
+    const el=document.getElementById('tab-'+x);
+    if(el)el.style.display=(x===t?'block':'none');
+  });
+  document.querySelectorAll('.nav-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['list','new','scan','prepocet','nastaveni'][i]===t);
+  });
+  if(t==='list')renderList();
+  if(t==='prepocet')prepFillSel();
+  if(t==='nastaveni'){const k=getKey();if(k)document.getElementById('api-key-inp').value=k;checkKeyBanners();}
+  if(t==='scan')checkKeyBanners();
+}
+
+function toggleTag(el){el.classList.toggle('on')}
+function getTags(){return[...document.querySelectorAll('#tag-chips .chip.on')].map(c=>c.dataset.tag)}
+function setTags(tags){document.querySelectorAll('#tag-chips .chip').forEach(c=>c.classList.toggle('on',(tags||[]).includes(c.dataset.tag)))}
+
+const STYPY=['těsto / korpus','náplň','pěna / krém','poleva / ganache','krém na zdobení','dekorace','jiné'];
+function addSlozka(d){
+  const w=document.getElementById('slozky-wrap');
+  const el=document.createElement('div');el.className='slozka-block';
+  el.innerHTML=`
+    <div class="slozka-header">
+      <input type="text" placeholder="Název složky" value="${d?escHtml(d.nazev||''):''}" style="font-weight:500">
+      <select style="max-width:155px;font-size:12px">${STYPY.map(t=>`<option ${d&&d.typ===t?'selected':''}>${t}</option>`).join('')}</select>
+      <button class="btn sm del" onclick="this.closest('.slozka-block').remove()">✕</button>
+    </div>
+    <div class="iw">${(d&&d.ingredience||[]).map(iLine).join('')}</div>
+    <button class="btn sm" style="margin-top:4px" onclick="this.previousElementSibling.insertAdjacentHTML('beforeend',iLine(null))">+ Surovina</button>`;
+  w.appendChild(el);
+}
+function iLine(d){
+  return`<div class="ingr-line">
+    <input type="number" placeholder="Množ." value="${d?d.mnozstvi||'':''}" step="any" min="0">
+    <input type="text" placeholder="g/ks" value="${d?escHtml(d.jednotka||'g'):'g'}">
+    <input type="text" placeholder="Surovina" value="${d?escHtml(d.nazev||''):''}">
+    <button class="btn sm" style="padding:4px 7px" onclick="this.closest('.ingr-line').remove()">✕</button>
+  </div>`;
+}
+function getSlozky(){
+  return[...document.querySelectorAll('.slozka-block')].map(b=>({
+    nazev:b.querySelector('input[type=text]').value,
+    typ:b.querySelector('select').value,
+    ingredience:[...b.querySelectorAll('.ingr-line')].map(l=>{
+      const ii=l.querySelectorAll('input');
+      return{mnozstvi:parseFloat(ii[0].value)||0,jednotka:ii[1].value||'g',nazev:ii[2].value};
+    }).filter(i=>i.nazev)
+  }));
+}
+function setSlozky(sl){
+  document.getElementById('slozky-wrap').innerHTML='';
+  (sl||[{nazev:'Ingredience',typ:'jiné',ingredience:[]}]).forEach(s=>addSlozka(s));
+}
+
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+function resetForm(){
+  document.getElementById('edit-id').value='';
+  document.getElementById('form-title').textContent='Nový recept';
+  ['r-name','r-popis','r-postup','r-poznamky'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('r-typ').value='dort';
+  document.getElementById('r-porce').value='1';
+  document.getElementById('r-dort-size').value='';
+  document.getElementById('r-peceni').value='';
+  document.getElementById('r-priprava').value='';
+  document.getElementById('dort-size-wrap').style.display='block';
+  setTags([]);setSlozky(null);
+  const ab=document.getElementById('ai-form-box');if(ab)ab.innerHTML='';
+}
+function fillForm(d){
+  document.getElementById('r-name').value=d.name||'';
+  document.getElementById('r-typ').value=d.typ||'dort';
+  document.getElementById('r-porce').value=d.porce||1;
+  document.getElementById('r-dort-size').value=d.dortSize||'';
+  document.getElementById('r-peceni').value=d.peceni||'';
+  document.getElementById('r-priprava').value=d.priprava||'';
+  document.getElementById('r-popis').value=d.popis||'';
+  document.getElementById('r-postup').value=d.postup||'';
+  document.getElementById('r-poznamky').value=d.poznamky||'';
+  document.getElementById('dort-size-wrap').style.display=(d.typ==='dort')?'block':'none';
+  setTags(d.tags||[]);
+  document.getElementById('slozky-wrap').innerHTML='';
+  (d.slozky&&d.slozky.length?d.slozky:[{nazev:'Ingredience',typ:'jiné',ingredience:[]}]).forEach(s=>addSlozka(s));
+}
+async function saveRecept(){
+  const name=document.getElementById('r-name').value.trim();
+  if(!name){alert('Zadejte název receptu');return}
+  const id=document.getElementById('edit-id').value||Date.now().toString();
+  const r={id,name,
+    typ:document.getElementById('r-typ').value,
+    porce:parseFloat(document.getElementById('r-porce').value)||1,
+    dortSize:document.getElementById('r-dort-size').value,
+    peceni:document.getElementById('r-peceni').value,
+    priprava:document.getElementById('r-priprava').value,
+    tags:getTags(),
+    popis:document.getElementById('r-popis').value,
+    postup:document.getElementById('r-postup').value,
+    poznamky:document.getElementById('r-poznamky').value,
+    slozky:getSlozky()
+  };
+  const idx=recepty.findIndex(x=>x.id===id);
+  if(idx>=0)recepty[idx]=r;else recepty.push(r);
+  save();
+  await saveRecept_db(r);
+  goTab('list');resetForm();
+}
+async function deleteRecept(id){
+  if(!confirm('Smazat recept?'))return;
+  recepty=recepty.filter(x=>x.id!==id);save();
+  await deleteRecept_db(id);
+  goTab('list');
+}
+function editRecept(id){
+  const r=recepty.find(x=>x.id===id);if(!r)return;
+  goTab('new');
+  document.getElementById('edit-id').value=id;
+  document.getElementById('form-title').textContent='Upravit recept';
+  fillForm(r);
+}
+
+const TL={dort:'Dort',zakusek:'Zákusek',korpus:'Korpus/složka',krem:'Krém',jine:'Jiné'};
+function dortLabel(s){return DORT_SIZES[s]?DORT_SIZES[s].label:'∅ '+s+' cm'}
+function tagHtml(t){
+  const l={svadba:'Svatba',svatky:'Svátky',bezlepek:'Bezlepek',vegan:'Vegan',special:'Speciální',zakaznik:'Zákazník'};
+  return`<span class="tag ${t}">${l[t]||t}</span>`;
+}
+function renderList(){
+  const q=(document.getElementById('srch').value||'').toLowerCase();
+  const typ=document.getElementById('srch-typ').value;
+  const el=document.getElementById('recipe-list');
+  const f=recepty.filter(r=>(!q||r.name.toLowerCase().includes(q)||(r.tags||[]).some(t=>t.includes(q)))&&(!typ||r.typ===typ));
+  if(!f.length){el.innerHTML='<div class="empty">Žádné recepty nenalezeny.</div>';return}
+  el.innerHTML=f.map(r=>`
+    <div class="r-card" onclick="showDetail('${r.id}')">
+      <h3>${escHtml(r.name)}</h3>
+      <div class="meta">
+        <span>${TL[r.typ]||r.typ}</span>
+        ${r.dortSize?`<span>${dortLabel(r.dortSize)}</span>`:''}
+        <span>${r.porce} ${r.typ==='dort'?'porcí':'ks'}</span>
+        ${r.peceni?`<span>🕐 ${r.peceni} min</span>`:''}
+      </div>
+      <div class="chips" style="margin-top:2px">${(r.tags||[]).map(tagHtml).join('')}</div>
+    </div>`).join('');
+}
+
+function showDetail(id){
+  const r=recepty.find(x=>x.id===id);if(!r)return;
+  const times=[];
+  if(r.priprava)times.push(`<span class="time-pill">Příprava: <b>${r.priprava} min</b></span>`);
+  if(r.peceni)times.push(`<span class="time-pill">Pečení: <b>${r.peceni} min</b></span>`);
+  if(r.priprava&&r.peceni)times.push(`<span class="time-pill">Celkem: <b>${(+r.priprava||0)+(+r.peceni||0)} min</b></span>`);
+  const sHtml=(r.slozky||[]).map(s=>`
+    <div class="card-sm">
+      <div style="font-size:13px;font-weight:500;margin-bottom:4px">${escHtml(s.nazev)} <span style="font-weight:400;color:#888;font-size:11px">${s.typ}</span></div>
+      <table class="ingr-tbl">${(s.ingredience||[]).map(i=>`<tr><td>${i.mnozstvi}</td><td>${escHtml(i.jednotka)}</td><td>${escHtml(i.nazev)}</td></tr>`).join('')}</table>
+    </div>`).join('');
+  document.getElementById('detail-content').innerHTML=`
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap">
+        <div>
+          <h2 style="font-size:19px;font-weight:600">${escHtml(r.name)}</h2>
+          <div style="font-size:13px;color:#888;margin-top:2px">${TL[r.typ]||r.typ}${r.dortSize?' · '+dortLabel(r.dortSize):''} · ${r.porce} ${r.typ==='dort'?'porcí':'ks'}</div>
+          <div class="chips" style="margin-top:6px">${(r.tags||[]).map(tagHtml).join('')}</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn sm" onclick="editRecept('${r.id}')">Upravit</button>
+          <button class="btn sm" onclick="prepFromDetail('${r.id}')">Přepočítat</button>
+          <button class="btn sm del" onclick="deleteRecept('${r.id}')">Smazat</button>
+        </div>
+      </div>
+      ${times.length?`<div class="time-pills" style="margin-top:0.75rem">${times.join('')}</div>`:''}
+      ${r.popis?`<div style="font-size:13px;line-height:1.6;color:#666;margin-top:0.75rem">${escHtml(r.popis)}</div>`:''}
+    </div>
+    <div style="margin-bottom:1rem">
+      <div style="font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.4rem">Ingredience</div>
+      ${sHtml||'<div style="color:#888;font-size:13px">Žádné ingredience</div>'}
+    </div>
+    ${r.postup?`<div style="margin-bottom:1rem"><div style="font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.4rem">Postup</div><div style="font-size:13px;line-height:1.7;white-space:pre-wrap">${escHtml(r.postup)}</div></div>`:''}
+    ${r.poznamky?`<div style="margin-bottom:1rem"><div style="font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.4rem">Poznámky</div><div class="note-box">${escHtml(r.poznamky)}</div></div>`:''}
+    <div class="btn-row"><button class="btn ai-btn" onclick="aiTips('${r.id}')">AI tipy pro recept ✦</button></div>
+    <div id="ai-detail-box"></div>`;
+  goTab('detail');
+}
+
+// SCAN
+let scanB64=null,scanMime='image/jpeg';
+function handleScanFile(input){const file=input.files[0];if(!file)return;processScanFile(file);}
+function onScanDrop(e){
+  e.preventDefault();document.getElementById('scan-zone').classList.remove('over');
+  const file=e.dataTransfer.files[0];
+  if(file&&file.type.startsWith('image/'))processScanFile(file);
+}
+function processScanFile(file){
+  let mime=file.type;
+  if(!mime||mime==='application/octet-stream'){
+    const ext=file.name.split('.').pop().toLowerCase();
+    const m={jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',gif:'image/gif',webp:'image/webp',heic:'image/jpeg',heif:'image/jpeg'};
+    mime=m[ext]||'image/jpeg';
+  }
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const src=e.target.result;
+    const img=new Image();
+    img.onload=()=>{
+      const canvas=document.createElement('canvas');
+      canvas.width=Math.min(img.width,1600);
+      canvas.height=Math.round(img.height*(canvas.width/img.width));
+      canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+      const dataUrl=canvas.toDataURL('image/jpeg',0.92);
+      scanB64=dataUrl.split(',')[1];scanMime='image/jpeg';showScanPreview(dataUrl);
+    };
+    img.onerror=()=>{scanB64=src.split(',')[1];scanMime=mime;showScanPreview(src);};
+    img.src=src;
+  };
+  reader.readAsDataURL(file);
+}
+function showScanPreview(src){
+  document.getElementById('scan-preview').src=src;
+  document.getElementById('scan-preview').style.display='block';
+  document.getElementById('scan-action').style.display='flex';
+  document.getElementById('scan-zone-hint').textContent='Fotka načtena ✓';
+}
+function clearScan(){
+  scanB64=null;
+  document.getElementById('scan-preview').style.display='none';
+  document.getElementById('scan-action').style.display='none';
+  document.getElementById('scan-result').innerHTML='';
+  document.getElementById('scan-progress').style.display='none';
+  document.getElementById('file-inp').value='';
+  document.getElementById('scan-zone-hint').textContent='nebo sem přetáhni fotku';
+}
+async function doScan(){
+  if(!scanB64)return;
+  const key=getKey();
+  if(!key){alert('Nastav API klíč v Nastavení (⚙️)');goTab('nastaveni');return;}
+  const prog=document.getElementById('scan-progress');
+  const fill=document.getElementById('prog-fill');
+  const stxt=document.getElementById('scan-status-txt');
+  const result=document.getElementById('scan-result');
+  prog.style.display='block';result.innerHTML='';
+  stxt.textContent='Odesílám obrázek do AI...';fill.style.width='25%';
+  const prompt=`Jsi asistentka cukrářky. Na obrázku je recept. Vrať POUZE čistý JSON bez backticks:
+{"name":"","typ":"dort|zakusek|korpus|krem|jine","porce":1,"dortSize":"17|21|25|25v|","peceni":null,"priprava":null,"popis":"","postup":"","poznamky":"","tags":[],"slozky":[{"nazev":"","typ":"těsto / korpus|náplň|pěna / krém|poleva / ganache|krém na zdobení|dekorace|jiné","ingredience":[{"mnozstvi":0,"jednotka":"g","nazev":""}]}]}
+Velikosti dortů: 17cm=7porcí, 21cm=14porcí, 25cm=18porcí, 25v=25cm vyšší=25porcí. Množství vždy v gramech. Odpověz POUZE JSON.`;
+  try{
+    stxt.textContent='AI čte recept...';fill.style.width='55%';
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{inline_data:{mime_type:scanMime,data:scanB64}},{text:prompt}]}]})
+    });
+    stxt.textContent='Zpracovávám odpověď...';fill.style.width='80%';
+    const data=await res.json();
+    if(data.error){prog.style.display='none';result.innerHTML=aiErr('API chyba: '+data.error.message);return;}
+    const raw=data.candidates?.[0]?.content?.parts?.[0]?.text||'';
+    let parsed;
+    try{parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());}
+    catch(e){prog.style.display='none';result.innerHTML=aiErr('Nepodařilo se přečíst recept. Zkus ostřejší fotku.');return;}
+    fill.style.width='100%';await new Promise(r=>setTimeout(r,300));prog.style.display='none';
+    result.innerHTML=`
+      <div class="ai-box"><div class="ai-label">Recept přečten ✓</div><p>Načten: <b>${escHtml(parsed.name||'(bez názvu)')}</b></p></div>
+      <div class="btn-row">
+        <button class="btn prim" id="fill-btn">Otevřít ve formuláři →</button>
+        <button class="btn" onclick="clearScan()">Jiná fotka</button>
+      </div>`;
+    document.getElementById('fill-btn').onclick=()=>{
+      resetForm();document.getElementById('form-title').textContent='Recept ze skenu — zkontroluj a ulož';
+      fillForm(parsed);goTab('new');
+      document.getElementById('ai-form-box').innerHTML=`<div class="ai-box"><div class="ai-label">Ze skenu</div><p>Zkontroluj hodnoty a pak ulož.</p></div>`;
+    };
+  }catch(e){prog.style.display='none';result.innerHTML=aiErr('Chyba: '+e.message);}
+}
+function aiErr(msg){return`<div class="ai-box ai-err"><div class="ai-label">Chyba</div><p>${escHtml(msg)}</p></div>`;}
+
+// PŘEPOČET
+let prepMode='vel';
+function setPrepMode(m){
+  prepMode=m;
+  document.getElementById('prep-vel-mode').style.display=m==='vel'?'block':'none';
+  document.getElementById('prep-porce-mode').style.display=m==='porce'?'block':'none';
+  document.getElementById('pmt-vel').classList.toggle('active',m==='vel');
+  document.getElementById('pmt-porce').classList.toggle('active',m==='porce');
+  document.getElementById('prep-result').innerHTML='';
+}
+function prepFillSel(){
+  const s=document.getElementById('prep-sel');
+  const cur=s.value;
+  s.innerHTML='<option value="">– vyberte –</option>'+recepty.map(r=>`<option value="${r.id}">${escHtml(r.name)}</option>`).join('');
+  if(cur)s.value=cur;
+}
+function prepLoad(){
+  document.getElementById('prep-result').innerHTML='';
+  ['17','21','25','25v'].forEach(k=>{document.getElementById('vel-'+k).value=0;});
+}
+function setDort(cm){
+  // zachována pro kompatibilitu
+}
+function prepPocitejVel(){
+  const r=recepty.find(x=>x.id===document.getElementById('prep-sel').value);
+  if(!r){document.getElementById('prep-result').innerHTML='';return;}
+  const velKsy={
+    '17':parseInt(document.getElementById('vel-17').value)||0,
+    '21':parseInt(document.getElementById('vel-21').value)||0,
+    '25':parseInt(document.getElementById('vel-25').value)||0,
+    '25v':parseInt(document.getElementById('vel-25v').value)||0,
+  };
+  const active=Object.entries(velKsy).filter(([,ks])=>ks>0);
+  if(!active.length){document.getElementById('prep-result').innerHTML='';return;}
+
+  // Klíčová slova pro každou velikost — hledáme je v názvu složky
+  const velKeywords={
+    '17':['17'],
+    '21':['21'],
+    '25v':['25v','vyšší','vyssí','25cm vyšší','25 vyšší'],
+    '25':['25'],
+  };
+
+  // Pro každou aktivní velikost najdi odpovídající složku v receptu
+  let html='';
+  const totals={};
+  let someFound=false;
+
+  active.forEach(([sk,ks])=>{
+    const ds=DORT_SIZES[sk];
+    const keywords=velKeywords[sk];
+
+    // Hledej složku jejíž název obsahuje klíčové slovo pro tuto velikost
+    // Pro 25v hledáme dřív než pro 25 aby se nepletly
+    const slozka=r.slozky?.find(s=>{
+      const n=s.nazev.toLowerCase();
+      return keywords.some(kw=>n.includes(kw.toLowerCase()));
+    });
+
+    html+=`<div class="mbl-header">${ds.label} × ${ks} ks${slozka?'':' — složka nenalezena v receptu'}</div>`;
+
+    if(slozka){
+      someFound=true;
+      html+=`<div style="font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.04em;margin:0.4rem 0 0.2rem;padding-left:2px">${escHtml(slozka.nazev)}</div>`;
+      (slozka.ingredience||[]).forEach(i=>{
+        const v=i.mnozstvi*ks;
+        const d=(i.jednotka==='g'||i.jednotka==='ml')?Math.round(v):+v.toFixed(2);
+        html+=`<div class="scale-row"><span>${escHtml(i.nazev)}</span><span style="font-weight:500">${d} ${escHtml(i.jednotka)}</span></div>`;
+        const k=i.nazev.toLowerCase()+'__'+i.jednotka;
+        if(!totals[k])totals[k]={nazev:i.nazev,jednotka:i.jednotka,total:0};
+        totals[k].total+=i.mnozstvi*ks;
+      });
+    } else {
+      html+=`<div style="font-size:12px;color:#8b2020;padding:4px 0">Pro tuto velikost nebyla nalezena složka v receptu. Přidej složku s názvem obsahujícím "${ds.label}" do receptu.</div>`;
+    }
+  });
+
+  // Celkový souhrn pokud více velikostí
+  if(active.length>1&&someFound){
+    html+=`<div class="mbl-header mbl-total">Celkový souhrn všech velikostí</div>`;
+    Object.values(totals).sort((a,b)=>a.nazev.localeCompare(b.nazev)).forEach(s=>{
+      const v=(s.jednotka==='g'||s.jednotka==='ml')?Math.round(s.total):+s.total.toFixed(2);
+      html+=`<div class="scale-row"><span>${escHtml(s.nazev)}</span><span style="font-weight:500">${v} ${escHtml(s.jednotka)}</span></div>`;
+    });
+  }
+
+  document.getElementById('prep-result').innerHTML=`<div class="card" style="margin-top:0.75rem"><div style="font-size:15px;font-weight:500;margin-bottom:0.5rem">${escHtml(r.name)}</div>${html}</div>`;
+}
+function prepPocitej(){
+  const r=recepty.find(x=>x.id===document.getElementById('prep-sel').value);if(!r)return;
+  const isDort=r.typ==='dort';
+  let nas=1;
+  const pI=parseFloat(document.getElementById('prep-porce').value);
+  const nI=parseFloat(document.getElementById('prep-nas').value);
+  if(pI)nas=pI/r.porce;else if(nI)nas=nI;
+  let h=`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:0.75rem">
+    <div><div style="font-size:15px;font-weight:500">${escHtml(r.name)}</div>
+    <div style="font-size:12px;color:#888">Základ: ${r.porce} ${isDort?'porcí':'ks'} → Cíl: ${Math.round(r.porce*nas)} ${isDort?'porcí':'ks'}</div></div>
+    <div style="background:#f5f4f0;border:0.5px solid #e0ddd6;border-radius:9px;padding:5px 12px;font-size:13px">Násobitel: <b>${nas.toFixed(2)}</b></div>
+  </div>`;
+  (r.slozky||[]).forEach(s=>{
+    h+=`<div style="font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.04em;margin:0.6rem 0 0.3rem">${escHtml(s.nazev)}</div>`;
+    (s.ingredience||[]).forEach(i=>{
+      const v=i.mnozstvi*nas;
+      const d=(i.jednotka==='g'||i.jednotka==='ml')?Math.round(v):+v.toFixed(2);
+      h+=`<div class="scale-row"><span>${escHtml(i.nazev)}</span><span style="font-weight:500">${d} ${escHtml(i.jednotka)}</span></div>`;
+    });
+  });
+  document.getElementById('prep-result').innerHTML=h+`</div>`;
+}
+function prepFromDetail(id){
+  goTab('prepocet');prepFillSel();
+  document.getElementById('prep-sel').value=id;prepLoad();
+}
+
+// AI
+async function callAI(prompt,targetId,loading){
+  const key=getKey();
+  const el=document.getElementById(targetId);
+  if(!key){el.innerHTML=`<div class="ai-box ai-err"><div class="ai-label">API klíč chybí</div><p>Nastav API klíč v <b>Nastavení (⚙️)</b>.</p></div>`;return;}
+  el.innerHTML=`<div class="ai-box"><div class="ai-label">AI asistentka</div><p style="color:#555">${loading}</p></div>`;
+  try{
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        system_instruction:{parts:[{text:'Jsi asistentka cukrářky. Píšeš česky, stručně a prakticky. Jednotky vždy v gramech.'}]},
+        contents:[{parts:[{text:prompt}]}]
+      })
+    });
+    const d=await res.json();
+    if(d.error){el.innerHTML=`<div class="ai-box ai-err"><div class="ai-label">Chyba</div><p>${escHtml(d.error.message)}</p></div>`;return;}
+    const t=d.candidates?.[0]?.content?.parts?.[0]?.text||'Bez odpovědi.';
+    el.innerHTML=`<div class="ai-box"><div class="ai-label">AI asistentka</div><p>${t.replace(/\n/g,'<br>')}</p></div>`;
+  }catch(e){
+    el.innerHTML=`<div class="ai-box ai-err"><div class="ai-label">Chyba</div><p>${escHtml(e.message)}</p></div>`;
+  }
+}
+function aiPostup(){
+  const name=document.getElementById('r-name').value||'recept';
+  const ingrs=getSlozky().map(s=>`${s.nazev}: ${s.ingredience.map(i=>`${i.mnozstvi}${i.jednotka} ${i.nazev}`).join(', ')}`).join('\n');
+  callAI(`Napiš číslovaný postup přípravy pro recept "${name}".\nSložky:\n${ingrs}\nMax 200 slov.`,'ai-form-box','Píšu postup...');
+}
+function aiTips(id){
+  const r=recepty.find(x=>x.id===id);if(!r)return;
+  const ingrs=(r.slozky||[]).flatMap(s=>s.ingredience).map(i=>`${i.mnozstvi}${i.jednotka} ${i.nazev}`).join(', ');
+  callAI(`Dej 3 praktické tipy pro recept "${r.name}" (${TL[r.typ]||r.typ}) s těmito surovinami: ${ingrs}. Stručně, jako zkušená cukrářka.`,'ai-detail-box','Přemýšlím...');
+}
+
+// EXPORT / IMPORT
+function exportData(){
+  const blob=new Blob([JSON.stringify(recepty,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='receptar-export.json';a.click();
+}
+function importData(){document.getElementById('import-inp').click();}
+function doImport(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!Array.isArray(data)){alert('Neplatný formát');return}
+      if(confirm(`Importovat ${data.length} receptů?`)){
+        const ids=new Set(recepty.map(r=>r.id));
+        data.forEach(r=>{if(!ids.has(r.id))recepty.push(r);});
+        save();goTab('list');alert(`Importováno ${data.length} receptů.`);
+      }
+    }catch(e){alert('Chyba při čtení souboru');}
+  };
+  reader.readAsText(file);
+}
+
+// INIT
+document.getElementById('r-typ').addEventListener('change',function(){
+  document.getElementById('dort-size-wrap').style.display=this.value==='dort'?'block':'none';
+});
+
+// Vždy aktualizuj ukázkové recepty na nejnovější verzi
+const _defaultRecepty=[
+  {id:'d1',name:'Vanilkový piškot',typ:'korpus',porce:7,dortSize:'17',peceni:'35',priprava:'20',tags:[],
+   popis:'Lehký vzdušný piškot pro vrstvené dorty. Každá velikost má přesné gramáže jako samostatnou složku.',
+   postup:'1. Oddělte bílky od žloutků.\n2. Ušlehejte bílky s cukrem do tuhého sněhu.\n3. Vmíchejte žloutky, prosátou mouku a špetky soli.\n4. Pečte na 170°C cca 35–40 minut.',
+   poznamky:'Nechte úplně vychladnout před krájením. Lze upéct den předem a zabalit do fólie.',
+   slozky:[
+     {nazev:'17 cm — 7 porcí',typ:'těsto / korpus',ingredience:[
+       {mnozstvi:150,jednotka:'g',nazev:'Vajíčka (3 ks)'},
+       {mnozstvi:100,jednotka:'g',nazev:'Cukr krupice'},
+       {mnozstvi:75,jednotka:'g',nazev:'Hladká mouka'},
+       {mnozstvi:3,jednotka:'ks',nazev:'Špetka soli'},
+       {mnozstvi:1,jednotka:'ks',nazev:'Vanilkový extrakt'},
+     ]},
+     {nazev:'21 cm — 14 porcí',typ:'těsto / korpus',ingredience:[
+       {mnozstvi:250,jednotka:'g',nazev:'Vajíčka (5 ks)'},
+       {mnozstvi:166,jednotka:'g',nazev:'Cukr krupice'},
+       {mnozstvi:125,jednotka:'g',nazev:'Hladká mouka'},
+       {mnozstvi:5,jednotka:'ks',nazev:'Špetka soli'},
+       {mnozstvi:1,jednotka:'ks',nazev:'Vanilkový extrakt'},
+     ]},
+     {nazev:'25 cm — 18 porcí',typ:'těsto / korpus',ingredience:[
+       {mnozstvi:300,jednotka:'g',nazev:'Vajíčka (6 ks)'},
+       {mnozstvi:200,jednotka:'g',nazev:'Cukr krupice'},
+       {mnozstvi:150,jednotka:'g',nazev:'Hladká mouka'},
+       {mnozstvi:6,jednotka:'ks',nazev:'Špetka soli'},
+       {mnozstvi:1,jednotka:'ks',nazev:'Vanilkový extrakt'},
+     ]},
+     {nazev:'25v cm vyšší — 25 porcí',typ:'těsto / korpus',ingredience:[
+       {mnozstvi:400,jednotka:'g',nazev:'Vajíčka (8 ks)'},
+       {mnozstvi:268,jednotka:'g',nazev:'Cukr krupice'},
+       {mnozstvi:201,jednotka:'g',nazev:'Hladká mouka'},
+       {mnozstvi:8,jednotka:'ks',nazev:'Špetka soli'},
+       {mnozstvi:1,jednotka:'ks',nazev:'Vanilkový extrakt'},
+     ]},
+   ]},
+  {id:'d2',name:'Cream cheese krém',typ:'krem',porce:1,dortSize:'',peceni:'',priprava:'15',tags:[],
+   popis:'Lehce nakyslý krém ideální na dort i zákusky.',
+   postup:'1. Vyšlehejte máslo do pěny.\n2. Přidejte cream cheese a moučkový cukr.\n3. Šlehejte 5 minut.',
+   poznamky:'Suroviny musí mít pokojovou teplotu.',
+   slozky:[{nazev:'Krém',typ:'pěna / krém',ingredience:[
+     {mnozstvi:250,jednotka:'g',nazev:'Cream cheese'},
+     {mnozstvi:100,jednotka:'g',nazev:'Máslo'},
+     {mnozstvi:150,jednotka:'g',nazev:'Moučkový cukr'},
+     {mnozstvi:5,jednotka:'g',nazev:'Vanilkový extrakt'},
+   ]}]}
+];
+// Přidej nebo aktualizuj výchozí recepty
+_defaultRecepty.forEach(dr=>{
+  const idx=recepty.findIndex(r=>r.id===dr.id);
+  if(idx>=0) recepty[idx]=dr; else recepty.push(dr);
+});
+save();
+
+setSlozky(null);
+
+// Načti povolené emaily z Firestore a pak sleduj stav přihlášení
+let _snapshotUnsub = null;
+function chybaViditelne(msg){
+  const el = document.getElementById('login-error');
+  if(el) el.textContent = msg;
+  document.getElementById('login-screen').style.display='flex';
+  document.querySelector('.app').style.display='none';
+  document.getElementById('no-access-screen').style.display='none';
+}
+
+async function zpracujUzivatele(user){
+  currentUser = user;
+  const email = user.email.toLowerCase();
+  chybaViditelne('Načítám přístupová práva...');
+
+  // Načti aktuální povolené emaily
+  try{
+    const snap = await getDocs(collection(db, 'povoleni'));
+    POVOLENE_EMAILY = snap.docs.map(d => (d.data().email||'').toLowerCase());
+    chybaViditelne('Emaily načteny: '+POVOLENE_EMAILY.join(', '));
+  }catch(e){
+    chybaViditelne('CHYBA načtení emailů: '+e.code+' '+e.message);
+    return;
+  }
+
+  const povolen = POVOLENE_EMAILY.length === 0 || POVOLENE_EMAILY.includes(email);
+  chybaViditelne('Email: '+email+' | Povolen: '+povolen);
+
+  if(!povolen){
+    document.getElementById('login-screen').style.display='none';
+    document.querySelector('.app').style.display='none';
+    const nas = document.getElementById('no-access-screen');
+    nas.style.display='flex';
+    document.getElementById('no-access-email').textContent='Přihlášen/a jako: '+user.email;
+    const logoutBtn = document.getElementById('logout-no-access-btn');
+    if(logoutBtn) logoutBtn.onclick = ()=>signOut(auth);
+    return;
+  }
+
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('no-access-screen').style.display='none';
+  document.querySelector('.app').style.display='block';
+  const bar = document.getElementById('user-bar');
+  if(bar) bar.textContent = user.displayName || user.email;
+  setupNavListeners();
+
+  // Spusť snapshot jen jednou
+  if(_snapshotUnsub) _snapshotUnsub();
+  _snapshotUnsub = onSnapshot(collection(db, COLLECTION), (snapshot) => {
+    recepty = snapshot.docs.map(d => d.data());
+    if(recepty.length === 0){
+      _defaultRecepty.forEach(async dr => {
+        recepty.push(dr);
+        await saveRecept_db(dr);
+      });
+    }
+    save();
+    renderList();
+    if(document.getElementById('tab-prepocet').style.display==='block') prepFillSel();
+  }, (error) => {
+    console.error('Firestore chyba:', error);
+    const local = localStorage.getItem('receptar_v5');
+    if(local) try{ recepty=JSON.parse(local); }catch(e){}
+    renderList();
+  });
+}
+
+function setupNavListeners(){
+  // Navigace
+  const navMap = [
+    ['nav-list',   ()=>goTab('list')],
+    ['nav-new',    ()=>{goTab('new');resetForm();}],
+    ['nav-scan',   ()=>goTab('scan')],
+    ['nav-prep',   ()=>goTab('prepocet')],
+    ['nav-set',    ()=>goTab('nastaveni')],
+    ['nav-logout', ()=>odhlasit()],
+  ];
+  navMap.forEach(([id,fn])=>{
+    const el=document.getElementById(id);
+    if(el){ el.onclick=null; el.addEventListener('click',fn); }
+  });
+}
+
+async function initAuth(){
+  // 1. Nejdřív načti povolené emaily
+  try{
+    const snap = await getDocs(collection(db, 'povoleni'));
+    POVOLENE_EMAILY = snap.docs.map(d => (d.data().email||'').toLowerCase());
+    console.log('Povolené emaily:', POVOLENE_EMAILY);
+  } catch(e){
+    console.error('Chyba načítání emailů:', e);
+    // Pokud selže načtení — povol všechny přihlášené (záloha)
+    POVOLENE_EMAILY = [];
+  }
+
+  // 2. Zpracuj výsledek redirect přihlášení
+  try{
+    const result = await getRedirectResult(auth);
+    if(result && result.user){
+      console.log('Redirect přihlášení OK:', result.user.email);
+      // getRedirectResult vrátil uživatele — zpracuj ho rovnou
+      await zpracujUzivatele(result.user);
+      return; // onAuthStateChanged se postará o zbytek
+    }
+  }catch(e){
+    chybaViditelne('Redirect chyba: '+e.code+' — '+e.message);
+    console.warn('Redirect result chyba:', e.code, e.message);
+  }
+
+  // 3. Sleduj stav přihlášení
+  onAuthStateChanged(auth, async (user) => {
+    if(user){
+      await zpracujUzivatele(user);
+    } else {
+      currentUser = null;
+      document.getElementById('login-screen').style.display='flex';
+      document.getElementById('no-access-screen').style.display='none';
+      document.querySelector('.app').style.display='none';
+    }
+  });
+}
+initAuth();
+
+// Auth funkce
+async function prihlasit(){
+  try{
+    const btn = document.getElementById('login-btn');
+    if(btn) btn.disabled = true;
+    document.getElementById('login-error').textContent='Přihlašuji...';
+    await signInWithRedirect(auth, provider);
+  }catch(e){
+    document.getElementById('login-error').textContent='Chyba: '+e.message;
+    const btn = document.getElementById('login-btn');
+    if(btn) btn.disabled = false;
+  }
+}
+// Okamžitě přiřaď na window
+window.prihlasit = prihlasit;
+// A přidej listener hned jak je funkce dostupná
+document.addEventListener('DOMContentLoaded', ()=>{
+  const btn = document.getElementById('login-btn');
+  if(btn) btn.addEventListener('click', prihlasit);
+});
+// Záloha — přidej listener i hned teď (pro případ že DOM je already ready)
+(()=>{ const btn = document.getElementById('login-btn'); if(btn) btn.addEventListener('click', prihlasit); })();
+async function odhlasit(){
+  if(confirm('Odhlásit se?')) await signOut(auth);
+}
+
+// Zpřístupni funkce globálně (nutné pro type="module")
+// Toto se spustí okamžitě po načtení modulu
+window.goTab=goTab;
+window.resetForm=resetForm;
+window.toggleTag=toggleTag;
+window.addSlozka=addSlozka;
+window.saveRecept=saveRecept;
+window.deleteRecept=deleteRecept;
+window.editRecept=editRecept;
+window.showDetail=showDetail;
+window.prepFromDetail=prepFromDetail;
+window.prepFillSel=prepFillSel;
+window.prepLoad=prepLoad;
+window.setPrepMode=setPrepMode;
+window.prepPocitej=prepPocitej;
+window.prepPocitejVel=prepPocitejVel;
+window.setDort=setDort;
+window.renderList=renderList;
+window.handleScanFile=handleScanFile;
+window.onScanDrop=onScanDrop;
+window.clearScan=clearScan;
+window.doScan=doScan;
+window.aiPostup=aiPostup;
+window.aiTips=aiTips;
+window.saveApiKey=saveApiKey;
+window.exportData=exportData;
+window.importData=importData;
+window.doImport=doImport;
+window.iLine=iLine;
+window.prihlasit=prihlasit;
+window.odhlasit=odhlasit;
+</script>
+</body>
+</html>
